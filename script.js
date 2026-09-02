@@ -1,16 +1,3 @@
-// const products = [
-//   { id: 1, img: "images/kurtaset4.webp", badge: "Sale", title: "Embroided Kurta Set", price: "₹750", rating: 4.5 },
-//   { id: 2, img: "images/saree6.webp", badge: "New", title: "Kanjeevaram Silk Saree", price: "₹1590", rating: 4.5 },
-//   { id: 3, img: "images/top6.jpg", badge: "", title: "Printed Women Shirt", price: "₹600", rating: 4.5 },
-//   { id: 4, img: "images/heels7.webp", badge: "New", title: "White Shoes", price: "₹1200", rating: 4.5 },
-//   { id: 5, img: "images/mentshirt.jpg", badge: "New", title: "Men Printed Tshirt", price: "₹700", rating: 4.5 },
-//   { id: 6, img: "images/plate1.jpeg", badge: "Hot", title: "Ceramic Blue Plates", price: "₹1499", rating: 4.5 },
-//   { id: 7, img: "images/heels4.webp", badge: "Hot", title: "Women Heels", price: "₹800", rating: 4.5 },
-//   { id: 8, img: "images/table1.jpg", badge: "", title: "Living Room table", price: "₹3000", rating: 4.5 },
-//   { id: 9, img: "images/earring1.jpg", badge: "", title: "Beautiful kundan Earrings", price: "₹530", rating: 3.5 },
-//   { id: 10, img: "images/watch1.jpg", badge: "Hot", title: "Stylish Analog Watch", price: "₹3500", rating: 4.5 }
-// ];
-
 let products = [];
 
 async function loadProducts() {
@@ -53,8 +40,6 @@ function renderProducts() {
   container.innerHTML = cardsArray.join("");
 }
 
-// renderProducts();
-
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 function saveCart() {
@@ -82,7 +67,11 @@ function renderCartPanel() {
       <img src="${product.img}" alt="${product.title}">
       <div class="cart-item-details">
         <p>${product.title}</p>
-        <p>Qty: ${item.quantity} × ₹${getNumericPrice(product.price)}</p>
+        <p>₹${getNumericPrice(product.price)} ×
+          <button class="qty-btn" data-action="decrease" data-id="${item.id}">−</button>
+          <span>${item.quantity}</span>
+          <button class="qty-btn" data-action="increase" data-id="${item.id}">+</button>
+        </p>
       </div>
       <button class="remove-item-btn" data-id="${item.id}">Remove</button>
     </div>`;
@@ -132,10 +121,26 @@ document.querySelector("#cart-items").addEventListener("click", function (event)
   if (event.target.classList.contains("remove-item-btn")) {
     const idToRemove = Number(event.target.dataset.id);
     cart = cart.filter(function (item) { return item.id !== idToRemove; });
-    saveCart();
-    updateCartCount();
-    renderCartPanel();
   }
+
+  if (event.target.classList.contains("qty-btn")) {
+    const id = Number(event.target.dataset.id);
+    const action = event.target.dataset.action;
+    const item = cart.find(function (i) { return i.id === id; });
+
+    if (action === "increase") {
+      item.quantity += 1;
+    } else {
+      item.quantity -= 1;
+      if (item.quantity <= 0) {
+        cart = cart.filter(function (i) { return i.id !== id; });
+      }
+    }
+  }
+
+  saveCart();
+  updateCartCount();
+  renderCartPanel();
 });
 
 document.querySelector("#checkout-btn").addEventListener("click", async function () {
@@ -149,20 +154,17 @@ document.querySelector("#checkout-btn").addEventListener("click", async function
 
   const response = await fetch("/api/checkout", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + token
-    }
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token }
   });
 
   const data = await response.json();
 
   if (response.ok) {
-    alert(data.message);
+    document.querySelector("#cart-items").innerHTML = `<p style="text-align:center; padding:20px;">✅ ${data.message}</p>`;
+    document.querySelector("#cart-total-price").textContent = "₹0";
     cart = [];
     saveCart();
     updateCartCount();
-    renderCartPanel();
   } else {
     alert(data.error);
     window.location.href = "loginpage.html";

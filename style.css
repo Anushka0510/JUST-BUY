@@ -742,3 +742,14 @@ input:valid ~ label {
 .remove-item-btn { cursor: pointer; color: #9a3f3f; border: none; background: none; font-size: 13px; text-decoration: underline; }
 #checkout-btn { width: 100%; padding: 10px; margin-top: 10px; cursor: pointer; background-color: #9a3f3f; color: #fbeed7; border: none; border-radius: 5px; font-weight: 600; }
 #checkout-btn:hover { background-color: #c1856d; }
+
+.qty-btn {
+  background: #9a3f3f;
+  color: #fbeed7;
+  border: none;
+  border-radius: 3px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 12px;
+}
