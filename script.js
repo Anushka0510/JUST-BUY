@@ -113,6 +113,10 @@ document.querySelector("#cart-icon").addEventListener("click", function (event) 
   renderCartPanel();
 });
 
+document.querySelector("#hamburger").addEventListener("click", function () {
+  document.querySelector(".nav").classList.toggle("nav-open");
+});
+
 document.querySelector("#cart-close").addEventListener("click", function () {
   document.querySelector("#cart-panel").classList.remove("open");
 });

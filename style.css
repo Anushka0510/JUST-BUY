@@ -753,3 +753,18 @@ input:valid ~ label {
   cursor: pointer;
   font-size: 12px;
 }
+
+.hamburger {
+  display: none;
+  cursor: pointer;
+  font-size: 22px;
+  color: #fbeed7;
+}
+
+@media (max-width: 768px) {
+  .hamburger { display: block; }
+  .navbar { flex-wrap: wrap; }
+  .nav { display: none; width: 100%; order: 3; }
+  .nav.nav-open { display: block; }
+  .nav ul { flex-direction: column; align-items: flex-start; gap: 12px; padding: 15px 0; }
+}
